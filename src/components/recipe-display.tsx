@@ -1,14 +1,14 @@
 'use client';
 
-import { useState, useTransition, useEffect } from 'react';
+import { useState, useTransition, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { summarizeRecipe } from '@/ai/flows/summarize-recipe';
 import type { GenerateRecipeFromPhotoOutput } from '@/ai/flows/generate-recipe-from-photo';
 import { suggestDrinkPairing, SuggestDrinkPairingOutput } from '@/ai/flows/suggest-drink-pairing';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Check, ChefHat, Heart, Clipboard, Loader2, Wand2, GlassWater, Wine, Beer } from 'lucide-react';
+import { Check, ChefHat, Heart, Clipboard, Loader2, Wand2, Wine } from 'lucide-react';
 import { Separator } from './ui/separator';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
@@ -24,6 +24,31 @@ interface RecipeDisplayProps {
   photoUrl: string;
 }
 
+// Helper function to highlight ingredients in a text
+const HighlightedText = ({ text, highlights }: { text: string; highlights: string[] }) => {
+  if (!highlights.length) {
+    return <>{text}</>;
+  }
+  // Create a regex to find all ingredients, case-insensitive
+  const regex = new RegExp(`(${highlights.join('|')})`, 'gi');
+  const parts = text.split(regex);
+
+  return (
+    <>
+      {parts.map((part, i) =>
+        regex.test(part) ? (
+          <strong key={i} className="font-bold text-primary">
+            {part}
+          </strong>
+        ) : (
+          part
+        )
+      )}
+    </>
+  );
+};
+
+
 export function RecipeDisplay({ initialRecipe, photoUrl }: RecipeDisplayProps) {
   const [recipe, setRecipe] = useState(initialRecipe);
   const [simpleInstructions, setSimpleInstructions] = useState<string[] | null>(null);
@@ -36,6 +61,23 @@ export function RecipeDisplay({ initialRecipe, photoUrl }: RecipeDisplayProps) {
   const [copied, setCopied] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
+
+  const ingredientsForHighlight = useMemo(() => {
+    // Extract the core ingredient name, removing quantities or descriptions
+    return recipe.ingredients.map(ing => {
+      let coreIngredient = ing.split(',')[0].trim();
+      // Remove common measurements
+      coreIngredient = coreIngredient.replace(/(\d+g|\d+\s*tbsp|\d+\s*tsp|\d+\s*cup|\d-inch piece|large|medium|small|cloves|of|a|an|the|to taste)/gi, '').trim();
+      // Handle pluralization simply
+      if (coreIngredient.endsWith('oes')) {
+         return `${coreIngredient.slice(0, -2)}|${coreIngredient}`;
+      }
+      if (coreIngredient.endsWith('s')) {
+        return `${coreIngredient.slice(0, -1)}|${coreIngredient}`;
+      }
+      return coreIngredient;
+    }).filter(ing => ing.length > 2); // filter out very short words
+  }, [recipe.ingredients]);
 
   useEffect(() => {
     // Fetch drink pairings when the recipe changes
@@ -175,42 +217,33 @@ ${simpleInstructions ? `\nInstructions (Simple):\n${simpleInstructions.map((step
       <div className="grid sm:grid-cols-3 gap-4">
         {isLoadingPairings ? (
           <>
-            <Skeleton className="h-48 w-full" />
-            <Skeleton className="h-48 w-full" />
-            <Skeleton className="h-48 w-full" />
+            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-24 w-full" />
           </>
         ) : (
           <>
             {drinkPairings?.wine && (
-              <Card className="flex flex-col relative overflow-hidden">
-                 <div className="relative h-32 w-full">
-                   <Image src="https://placehold.co/300x200" alt={drinkPairings.wine.name} fill objectFit="cover" data-ai-hint={drinkPairings.wine.imageHint} />
-                 </div>
-                 <CardContent className="p-4 flex-grow">
+              <Card>
+                 <CardContent className="p-4">
                    <h4 className="font-bold">{drinkPairings.wine.name}</h4>
-                   <p className="text-xs text-muted-foreground mt-1">{drinkPairings.wine.reason}</p>
+                   <p className="text-sm text-muted-foreground mt-1">{drinkPairings.wine.reason}</p>
                  </CardContent>
               </Card>
             )}
             {drinkPairings?.beer && (
-              <Card className="flex flex-col relative overflow-hidden">
-                <div className="relative h-32 w-full">
-                  <Image src="https://placehold.co/300x200" alt={drinkPairings.beer.name} fill objectFit="cover" data-ai-hint={drinkPairings.beer.imageHint} />
-                </div>
-                <CardContent className="p-4 flex-grow">
+              <Card>
+                <CardContent className="p-4">
                   <h4 className="font-bold">{drinkPairings.beer.name}</h4>
-                  <p className="text-xs text-muted-foreground mt-1">{drinkPairings.beer.reason}</p>
+                  <p className="text-sm text-muted-foreground mt-1">{drinkPairings.beer.reason}</p>
                 </CardContent>
               </Card>
             )}
             {drinkPairings?.nonAlcoholic && (
-              <Card className="flex flex-col relative overflow-hidden">
-                 <div className="relative h-32 w-full">
-                  <Image src="https://placehold.co/300x200" alt={drinkPairings.nonAlcoholic.name} fill objectFit="cover" data-ai-hint={drinkPairings.nonAlcoholic.imageHint} />
-                 </div>
-                <CardContent className="p-4 flex-grow">
+              <Card>
+                <CardContent className="p-4">
                   <h4 className="font-bold">{drinkPairings.nonAlcoholic.name}</h4>
-                  <p className="text-xs text-muted-foreground mt-1">{drinkPairings.nonAlcoholic.reason}</p>
+                  <p className="text-sm text-muted-foreground mt-1">{drinkPairings.nonAlcoholic.reason}</p>
                 </CardContent>
               </Card>
             )}
@@ -272,7 +305,9 @@ ${simpleInstructions ? `\nInstructions (Simple):\n${simpleInstructions.map((step
           <TabsContent value="expert" className="mt-4">
             <ol className="list-decimal list-inside space-y-3 prose">
               {recipe.instructions.map((step, i) => (
-                <li key={i}>{step}</li>
+                <li key={i}>
+                  <HighlightedText text={step} highlights={ingredientsForHighlight} />
+                </li>
               ))}
             </ol>
           </TabsContent>
@@ -280,7 +315,9 @@ ${simpleInstructions ? `\nInstructions (Simple):\n${simpleInstructions.map((step
             {simpleInstructions ? (
               <ol className="list-decimal list-inside space-y-3 prose">
                 {simpleInstructions.map((step, i) => (
-                  <li key={i}>{step}</li>
+                  <li key={i}>
+                    <HighlightedText text={step} highlights={ingredientsForHighlight} />
+                  </li>
                 ))}
               </ol>
             ) : (
