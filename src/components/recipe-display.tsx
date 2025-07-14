@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useTransition, useEffect, useMemo } from 'react';
@@ -24,13 +25,19 @@ interface RecipeDisplayProps {
   photoUrl: string;
 }
 
+// Helper function to escape special characters for regex
+const escapeRegExp = (string: string) => {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+};
+
 // Helper function to highlight ingredients in a text
 const HighlightedText = ({ text, highlights }: { text: string; highlights: string[] }) => {
   if (!highlights.length) {
     return <>{text}</>;
   }
-  // Create a regex to find all ingredients, case-insensitive
-  const regex = new RegExp(`(${highlights.join('|')})`, 'gi');
+  // Escape each highlight term and join them with '|'
+  const escapedHighlights = highlights.map(escapeRegExp);
+  const regex = new RegExp(`(${escapedHighlights.join('|')})`, 'gi');
   const parts = text.split(regex);
 
   return (
