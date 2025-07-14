@@ -4,10 +4,10 @@ import { Utensils, Lightbulb, Heart, AlertTriangle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 export default function Home() {
-  const isFirebaseConfigured = process.env.NEXT_PUBLIC_FIREBASE_API_KEY && process.env.FIREBASE_SERVICE_ACCOUNT;
+  const isFirebaseConfigured = !!(process.env.NEXT_PUBLIC_FIREBASE_API_KEY && process.env.FIREBASE_SERVICE_ACCOUNT);
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <>
       <section className="text-center mb-12 animate-in fade-in-50 slide-in-from-top-4 duration-500">
         <h1 className="text-4xl md:text-5xl font-bold tracking-tighter mb-4 font-headline text-primary">
           From Photo to Fork
@@ -23,9 +23,10 @@ export default function Home() {
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>Action Required: Configure Firebase</AlertTitle>
           <AlertDescription>
-            This app requires Firebase configuration to run. Please create a 
+            This app requires Firebase configuration to run. Please create a
             <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold">.env.local</code>
             file in the project root and add your Firebase web app config and service account key.
+            Without these, login and recipe saving will not work.
           </AlertDescription>
         </Alert>
       )}
@@ -70,12 +71,12 @@ export default function Home() {
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground">
-                Receive a complete recipe, save it to your profile, and start your culinary adventure.
+                Receive a complete recipe, save it, and start your culinary adventure.
               </p>
             </CardContent>
           </Card>
         </div>
       </section>
-    </div>
+    </>
   );
 }

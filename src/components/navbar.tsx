@@ -17,15 +17,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ChefHat, LogIn, LogOut, User as UserIcon } from 'lucide-react';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import { ChefHat, LogIn, LogOut, User as UserIcon, Refrigerator, Dna, GraduationCap } from 'lucide-react';
+
 
 export function Navbar() {
   const { user } = useAuth();
@@ -53,24 +46,25 @@ export function Navbar() {
           <ChefHat className="h-6 w-6 text-primary" />
           <span className="font-bold font-headline text-lg">PhotoDish</span>
         </Link>
+        <nav className="flex-1 items-center space-x-2 hidden md:flex">
+          {user && (
+            <>
+              <Button variant="link" asChild>
+                <Link href="/recipes">My Recipes</Link>
+              </Button>
+              <Button variant="link" asChild>
+                <Link href="/pantry">Pantry</Link>
+              </Button>
+              <Button variant="link" asChild>
+                <Link href="/flavor-profile">Flavor Profile</Link>
+              </Button>
+              <Button variant="link" asChild>
+                <Link href="/tutor">AI Tutor</Link>
+              </Button>
+            </>
+          )}
+        </nav>
         <div className="flex flex-1 items-center justify-end space-x-4">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="link" className="text-muted-foreground">About the Dev</Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle className="font-headline">About the Developer</DialogTitle>
-                <DialogDescription>
-                  This application was crafted by a passionate developer dedicated to building beautiful and functional web experiences.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                 <p>Fueled by coffee and a love for code, I enjoy bringing ideas to life with modern technologies like Next.js, Firebase, and Tailwind CSS. Thanks for checking out PhotoDish!</p>
-              </div>
-            </DialogContent>
-          </Dialog>
-
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -89,13 +83,31 @@ export function Navbar() {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
+                 <DropdownMenuItem asChild className="md:hidden">
                   <Link href="/recipes" className="cursor-pointer">
                     <UserIcon className="mr-2 h-4 w-4" />
                     <span>My Recipes</span>
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild className="md:hidden">
+                  <Link href="/pantry" className="cursor-pointer">
+                    <Refrigerator className="mr-2 h-4 w-4" />
+                    <span>Pantry</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="md:hidden">
+                  <Link href="/flavor-profile" className="cursor-pointer">
+                    <Dna className="mr-2 h-4 w-4" />
+                    <span>Flavor Profile</span>
+                  </Link>
+                </DropdownMenuItem>
+                 <DropdownMenuItem asChild className="md:hidden">
+                  <Link href="/tutor" className="cursor-pointer">
+                    <GraduationCap className="mr-2 h-4 w-4" />
+                    <span>AI Tutor</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator className="md:hidden" />
                 <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Sign out</span>

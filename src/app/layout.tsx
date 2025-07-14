@@ -26,8 +26,10 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className="scroll-smooth">
       <body className={cn("min-h-screen bg-background font-sans antialiased", inter.variable)}>
         <AuthProvider>
-          <Navbar />
-          <main className="flex-grow">{children}</main>
+          <div className="flex flex-col min-h-screen">
+            <Navbar />
+            <main className="flex-grow container mx-auto px-4 py-8">{children}</main>
+          </div>
           <Toaster />
         </AuthProvider>
       </body>

@@ -58,7 +58,7 @@ export default function RecipesPage() {
   
   if (loading || authLoading) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <>
         <h1 className="text-3xl font-bold mb-8 font-headline">My Saved Recipes</h1>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {[...Array(6)].map((_, i) => (
@@ -70,13 +70,13 @@ export default function RecipesPage() {
             </Card>
           ))}
         </div>
-      </div>
+      </>
     );
   }
 
   if (!user) {
     return (
-      <div className="container mx-auto px-4 py-8 text-center">
+      <div className="text-center">
         <h1 className="text-3xl font-bold mb-4 font-headline">Access Denied</h1>
         <p className="text-muted-foreground mb-6">You need to be signed in to view your saved recipes.</p>
         <Button asChild>
@@ -88,7 +88,7 @@ export default function RecipesPage() {
 
   if (recipes.length === 0) {
     return (
-      <div className="container mx-auto px-4 py-8 text-center">
+      <div className="text-center">
         <h1 className="text-3xl font-bold mb-4 font-headline">No Recipes Yet!</h1>
         <p className="text-muted-foreground mb-6">Looks like you haven't saved any recipes. Let's create one!</p>
         <Button asChild>
@@ -99,7 +99,7 @@ export default function RecipesPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <>
       <h1 className="text-3xl font-bold mb-8 font-headline">My Saved Recipes</h1>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {recipes.map(recipe => (
@@ -107,7 +107,7 @@ export default function RecipesPage() {
             <DialogTrigger asChild>
               <Card className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-300 group">
                 <div className="relative h-48 w-full">
-                  <Image src={recipe.photoUrl} alt={recipe.name} layout="fill" objectFit="cover" className="transition-transform duration-300 group-hover:scale-105" />
+                  <Image src={recipe.photoUrl} alt={recipe.name} fill objectFit="cover" className="transition-transform duration-300 group-hover:scale-105" />
                 </div>
                 <CardHeader>
                   <CardTitle className="truncate font-headline">{recipe.name}</CardTitle>
@@ -120,7 +120,7 @@ export default function RecipesPage() {
               </DialogHeader>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 overflow-y-auto pr-4">
                 <div className="relative h-64 md:h-auto">
-                    <Image src={recipe.photoUrl} alt={recipe.name} layout="fill" objectFit="cover" className="rounded-md"/>
+                    <Image src={recipe.photoUrl} alt={recipe.name} fill objectFit="cover" className="rounded-md"/>
                 </div>
                 <div>
                   <h3 className="text-xl font-semibold mb-2 flex items-center gap-2 font-headline">
@@ -166,6 +166,6 @@ export default function RecipesPage() {
           </Dialog>
         ))}
       </div>
-    </div>
+    </>
   );
 }
