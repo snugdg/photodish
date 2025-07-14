@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import {
-  signInWithPopup,
+  signInWithRedirect,
   signOut,
 } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase';
@@ -33,7 +33,7 @@ export function Navbar() {
 
   const handleSignIn = async () => {
     try {
-      await signInWithPopup(auth, googleProvider);
+      await signInWithRedirect(auth, googleProvider);
     } catch (error) {
       console.error('Error signing in with Google: ', error);
     }
