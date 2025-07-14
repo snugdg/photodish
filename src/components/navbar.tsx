@@ -1,0 +1,115 @@
+'use client';
+
+import Link from 'next/link';
+import {
+  signInWithPopup,
+  signOut,
+} from 'firebase/auth';
+import { auth, googleProvider } from '@/lib/firebase';
+import { useAuth } from '@/hooks/use-auth';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { ChefHat, LogIn, LogOut, User as UserIcon } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+
+export function Navbar() {
+  const { user } = useAuth();
+
+  const handleSignIn = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch (error) {
+      console.error('Error signing in with Google: ', error);
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error('Error signing out: ', error);
+    }
+  };
+
+  return (
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-16 items-center">
+        <Link href="/" className="mr-6 flex items-center space-x-2">
+          <ChefHat className="h-6 w-6 text-primary" />
+          <span className="font-bold font-headline text-lg">PhotoDish</span>
+        </Link>
+        <div className="flex flex-1 items-center justify-end space-x-4">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="link" className="text-muted-foreground">About the Dev</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle className="font-headline">About the Developer</DialogTitle>
+                <DialogDescription>
+                  This application was crafted by a passionate developer dedicated to building beautiful and functional web experiences.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                 <p>Fueled by coffee and a love for code, I enjoy bringing ideas to life with modern technologies like Next.js, Firebase, and Tailwind CSS. Thanks for checking out PhotoDish!</p>
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                  <Avatar className="h-9 w-9">
+                    <AvatarImage src={user.photoURL ?? ''} alt={user.displayName ?? 'User'} />
+                    <AvatarFallback>{user.displayName?.charAt(0)?.toUpperCase() ?? 'U'}</AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">{user.displayName}</p>
+                    <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/recipes" className="cursor-pointer">
+                    <UserIcon className="mr-2 h-4 w-4" />
+                    <span>My Recipes</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Sign out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button onClick={handleSignIn}>
+              <LogIn className="mr-2 h-4 w-4" />
+              Sign in with Google
+            </Button>
+          )}
+        </div>
+      </div>
+    </header>
+  );
+}
