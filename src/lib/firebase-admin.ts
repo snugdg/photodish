@@ -7,10 +7,7 @@ const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT;
 
 if (serviceAccountKey && !getApps().length) {
   try {
-    const parsedServiceAccountKey = serviceAccountKey.replace(/
-/g, '
-');
-    const serviceAccount = JSON.parse(parsedServiceAccountKey);
+    const serviceAccount = JSON.parse(serviceAccountKey);
     initializeApp({
       credential: cert(serviceAccount),
       storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
