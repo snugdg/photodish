@@ -1,19 +1,21 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useEffect } from 'react';
 import Image from 'next/image';
 import { summarizeRecipe } from '@/ai/flows/summarize-recipe';
 import type { GenerateRecipeFromPhotoOutput } from '@/ai/flows/generate-recipe-from-photo';
+import { suggestDrinkPairing, SuggestDrinkPairingOutput } from '@/ai/flows/suggest-drink-pairing';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Check, ChefHat, Heart, Clipboard, Loader2, Wand2 } from 'lucide-react';
+import { Check, ChefHat, Heart, Clipboard, Loader2, Wand2, GlassWater, Wine, Beer } from 'lucide-react';
 import { Separator } from './ui/separator';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 import { saveRecipeAction } from '@/lib/actions';
 import { remixRecipe } from '@/ai/flows/remix-recipe';
 import { Textarea } from './ui/textarea';
+import { Skeleton } from './ui/skeleton';
 
 type Recipe = GenerateRecipeFromPhotoOutput['recipe'];
 
@@ -25,13 +27,32 @@ interface RecipeDisplayProps {
 export function RecipeDisplay({ initialRecipe, photoUrl }: RecipeDisplayProps) {
   const [recipe, setRecipe] = useState(initialRecipe);
   const [simpleInstructions, setSimpleInstructions] = useState<string[] | null>(null);
+  const [drinkPairings, setDrinkPairings] = useState<SuggestDrinkPairingOutput | null>(null);
   const [remixPrompt, setRemixPrompt] = useState('');
   const [isRemixing, startRemixTransition] = useTransition();
   const [isLoadingSummary, startSummaryTransition] = useTransition();
   const [isSaving, startSavingTransition] = useTransition();
+  const [isLoadingPairings, startPairingTransition] = useTransition();
   const [copied, setCopied] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
+
+  useEffect(() => {
+    // Fetch drink pairings when the recipe changes
+    startPairingTransition(async () => {
+      try {
+        const pairings = await suggestDrinkPairing({
+          recipeName: recipe.name,
+          recipeIngredients: recipe.ingredients,
+        });
+        setDrinkPairings(pairings);
+      } catch (error) {
+        // Don't show a toast for this, as it's a non-critical feature
+        console.error("Error fetching drink pairings:", error);
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [recipe]);
 
   const getSimpleInstructions = async () => {
     if (simpleInstructions) return;
@@ -67,6 +88,11 @@ export function RecipeDisplay({ initialRecipe, photoUrl }: RecipeDisplayProps) {
 
     startRemixTransition(async () => {
       try {
+        // Reset dependent state before fetching new data
+        setRecipe(prev => ({...prev, name: `Remix of ${prev.name}`})); // Optimistic UI update
+        setSimpleInstructions(null);
+        setDrinkPairings(null);
+        
         const result = await remixRecipe({
           recipe: {
             name: recipe.name,
@@ -76,8 +102,6 @@ export function RecipeDisplay({ initialRecipe, photoUrl }: RecipeDisplayProps) {
           prompt: remixPrompt,
         });
         setRecipe(result.recipe);
-        // Reset dependent state
-        setSimpleInstructions(null); 
         toast({
           title: 'Recipe Remixed!',
           description: 'Your recipe has been updated with your changes.',
@@ -141,6 +165,63 @@ ${simpleInstructions ? `\nInstructions (Simple):\n${simpleInstructions.map((step
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  const PairingCard = () => (
+    <div className="space-y-4">
+      <h3 className="text-xl font-semibold flex items-center gap-2 font-headline">
+        <Wine className="w-6 h-6 text-primary" />
+        Drink Pairings
+      </h3>
+      <div className="grid sm:grid-cols-3 gap-4">
+        {isLoadingPairings ? (
+          <>
+            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-24 w-full" />
+          </>
+        ) : (
+          <>
+            {drinkPairings?.wine && (
+              <Card>
+                <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-2">
+                  <Wine className="w-5 h-5 text-muted-foreground" />
+                  <CardTitle className="text-base font-medium">Wine</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-lg font-bold">{drinkPairings.wine.name}</p>
+                  <p className="text-xs text-muted-foreground">{drinkPairings.wine.reason}</p>
+                </CardContent>
+              </Card>
+            )}
+            {drinkPairings?.beer && (
+              <Card>
+                <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-2">
+                  <Beer className="w-5 h-5 text-muted-foreground" />
+                  <CardTitle className="text-base font-medium">Beer</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-lg font-bold">{drinkPairings.beer.name}</p>
+                  <p className="text-xs text-muted-foreground">{drinkPairings.beer.reason}</p>
+                </CardContent>
+              </Card>
+            )}
+            {drinkPairings?.nonAlcoholic && (
+              <Card>
+                <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-2">
+                  <GlassWater className="w-5 h-5 text-muted-foreground" />
+                  <CardTitle className="text-base font-medium">Non-Alcoholic</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-lg font-bold">{drinkPairings.nonAlcoholic.name}</p>
+                  <p className="text-xs text-muted-foreground">{drinkPairings.nonAlcoholic.reason}</p>
+                </CardContent>
+              </Card>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <Card className="overflow-hidden animate-in fade-in-50 duration-500">
@@ -212,6 +293,10 @@ ${simpleInstructions ? `\nInstructions (Simple):\n${simpleInstructions.map((step
             )}
           </TabsContent>
         </Tabs>
+
+        <Separator className="my-6" />
+
+        <PairingCard />
 
         <Separator className="my-6" />
 
