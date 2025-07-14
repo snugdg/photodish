@@ -20,11 +20,12 @@ const GenerateRecipeFromPhotoInputSchema = z.object({
 export type GenerateRecipeFromPhotoInput = z.infer<typeof GenerateRecipeFromPhotoInputSchema>;
 
 const GenerateRecipeFromPhotoOutputSchema = z.object({
+  isFood: z.boolean().describe('Whether the image contains food or not.'),
   recipe: z.object({
-    name: z.string().describe('The name of the dish.'),
-    ingredients: z.array(z.string()).describe('The ingredients of the dish.'),
-    instructions: z.array(z.string()).describe('The instructions to prepare the dish.'),
-  }),
+    name: z.string().describe('The name of the dish. Should be empty if isFood is false.'),
+    ingredients: z.array(z.string()).describe('The ingredients of the dish. Should be empty if isFood is false.'),
+    instructions: z.array(z.string()).describe('The instructions to prepare the dish. Should be empty if isFood is false.'),
+  }).optional(),
 });
 export type GenerateRecipeFromPhotoOutput = z.infer<typeof GenerateRecipeFromPhotoOutputSchema>;
 
@@ -38,7 +39,9 @@ const prompt = ai.definePrompt({
   output: {schema: GenerateRecipeFromPhotoOutputSchema},
   prompt: `You are an expert chef specializing in reverse engineering recipes from dish photos.
 
-You will use this information to create a recipe for the dish in the photo. You will provide the ingredients and instructions for the recipe.
+First, determine if the image provided is a picture of food.
+If it is not food, set the isFood flag to false and do not generate a recipe.
+If it IS food, set the isFood flag to true and use this information to create a complete recipe for the dish in the photo. You will provide the ingredients and instructions for the recipe.
 
 Photo: {{media url=photoDataUri}}`,
 });

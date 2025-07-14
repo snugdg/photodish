@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils';
 export function RecipeUploader() {
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [recipe, setRecipe] = useState<GenerateRecipeFromPhotoOutput | null>(null);
+  const [recipeOutput, setRecipeOutput] = useState<GenerateRecipeFromPhotoOutput | null>(null);
   const [loading, setLoading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -29,7 +29,7 @@ export function RecipeUploader() {
         setPreviewUrl(reader.result as string);
       };
       reader.readAsDataURL(selectedFile);
-      setRecipe(null); // Reset recipe when new file is selected
+      setRecipeOutput(null); // Reset recipe when new file is selected
     }
   };
 
@@ -45,7 +45,7 @@ export function RecipeUploader() {
         setPreviewUrl(reader.result as string);
       };
       reader.readAsDataURL(droppedFile);
-      setRecipe(null);
+      setRecipeOutput(null);
     }
   };
   
@@ -69,14 +69,23 @@ export function RecipeUploader() {
       return;
     }
     setLoading(true);
-    setRecipe(null);
+    setRecipeOutput(null);
     try {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = async () => {
         const photoDataUri = reader.result as string;
         const result = await generateRecipeFromPhoto({ photoDataUri });
-        setRecipe(result);
+        if (result.isFood) {
+          setRecipeOutput(result);
+        } else {
+          toast({
+            variant: 'destructive',
+            title: 'Not a food picture',
+            description: 'Please upload a picture of a dish to get a recipe.',
+          });
+          setRecipeOutput(null);
+        }
       };
       reader.onerror = (error) => {
         throw new Error("Failed to read file");
@@ -134,7 +143,7 @@ export function RecipeUploader() {
             )}
           </Button>
         </div>
-        {loading && !recipe && (
+        {loading && !recipeOutput && (
           <div className="mt-8">
             <div className="space-y-4">
                <div className="relative h-64 w-full bg-muted rounded-lg animate-pulse"></div>
@@ -149,9 +158,9 @@ export function RecipeUploader() {
             </div>
           </div>
         )}
-        {recipe && previewUrl && (
+        {recipeOutput && recipeOutput.recipe && previewUrl && (
           <div className="mt-8">
-            <RecipeDisplay initialRecipe={recipe.recipe} photoUrl={previewUrl} />
+            <RecipeDisplay initialRecipe={recipeOutput.recipe} photoUrl={previewUrl} />
           </div>
         )}
       </CardContent>
