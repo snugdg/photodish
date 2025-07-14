@@ -17,7 +17,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ChefHat, LogIn, LogOut, User as UserIcon, Refrigerator, Dna, GraduationCap, Info } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter
+} from "@/components/ui/dialog"
+import { Card, CardContent } from '@/components/ui/card';
+import { ChefHat, LogIn, LogOut, User as UserIcon, Refrigerator, Dna, GraduationCap, Github, Linkedin, Twitter } from 'lucide-react';
 
 
 export function Navbar() {
@@ -38,6 +47,45 @@ export function Navbar() {
       console.error('Error signing out: ', error);
     }
   };
+
+  const AboutDialog = () => (
+    <Dialog>
+      <DialogTrigger asChild>
+         <Button variant="link">About the Dev</Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-md">
+         <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-center font-headline">Meet the Developer</DialogTitle>
+        </DialogHeader>
+        <div className="p-4 flex flex-col items-center gap-4">
+          <Avatar className="h-24 w-24">
+            <AvatarImage src="https://github.com/shadcn.png" alt="Developer Avatar" data-ai-hint="developer avatar" />
+            <AvatarFallback>SG</AvatarFallback>
+          </Avatar>
+          <div className="text-center">
+            <h3 className="text-xl font-bold font-headline">Sharmista Ghosh</h3>
+            <p className="text-muted-foreground mt-1 text-sm">A passionate developer who loves to cook and build amazing things with code. This project is a blend of my two passions!</p>
+            <div className="flex justify-center gap-4 mt-4">
+              <Button variant="outline" size="icon" asChild>
+                <Link href="#" target="_blank"><Github /></Link>
+              </Button>
+              <Button variant="outline" size="icon" asChild>
+                <Link href="#" target="_blank"><Linkedin /></Link>
+              </Button>
+              <Button variant="outline" size="icon" asChild>
+                <Link href="#" target="_blank"><Twitter /></Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+         <DialogFooter className="justify-center">
+            <Button asChild>
+                <Link href="#">View Portfolio</Link>
+            </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -65,9 +113,7 @@ export function Navbar() {
           )}
         </nav>
         <div className="flex flex-1 items-center justify-end space-x-4">
-           <Button variant="link" asChild>
-              <Link href="/about">About</Link>
-            </Button>
+           <AboutDialog />
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
