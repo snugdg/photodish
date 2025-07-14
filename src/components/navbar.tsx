@@ -25,7 +25,6 @@ import {
   DialogTrigger,
   DialogFooter
 } from "@/components/ui/dialog"
-import { Card, CardContent } from '@/components/ui/card';
 import { ChefHat, LogIn, LogOut, User as UserIcon, Refrigerator, Dna, GraduationCap, Github, Linkedin, Twitter } from 'lucide-react';
 
 

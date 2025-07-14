@@ -1,12 +1,9 @@
 'use client';
 
 import { RecipeUploader } from '@/components/recipe-uploader';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Utensils, Lightbulb, Heart, AlertTriangle, Github, Linkedin, Twitter } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Utensils, Lightbulb, Heart, AlertTriangle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useState, useEffect } from 'react';
 
 export default function Home() {
@@ -14,12 +11,7 @@ export default function Home() {
 
   useEffect(() => {
     const firebaseApiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
-    const firebaseServiceAccount = process.env.FIREBASE_SERVICE_ACCOUNT;
     
-    // In a real client-side check, we can only see public variables.
-    // The presence of the API key is a good proxy for client-side setup.
-    // A full check including the service account would need to be inferred or passed differently,
-    // but for this warning, checking the public key is sufficient to detect a missing .env.local file.
     if (!firebaseApiKey || firebaseApiKey.startsWith('NEXT_PUBLIC_')) {
       setIsFirebaseConfigured(false);
     }

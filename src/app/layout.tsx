@@ -3,14 +3,8 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 import { AuthProvider } from '@/components/auth-provider';
 import { Navbar } from '@/components/navbar';
-import { Inter } from 'next/font/google';
+import { inter } from '@/app/font';
 import { cn } from '@/lib/utils';
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-sans',
-});
-
 
 export const metadata: Metadata = {
   title: 'PhotoDish - AI Recipe Generator',
