@@ -15,6 +15,11 @@ export default function Home() {
         </p>
       </section>
 
+      <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-md my-8 max-w-2xl mx-auto" role="alert">
+        <p className="font-bold">Action Required</p>
+        <p>This app requires Firebase configuration. Please add your Firebase project's web app configuration to a `.env.local` file in the root of the project.</p>
+      </div>
+
       <RecipeUploader />
 
       <section className="mt-20">
