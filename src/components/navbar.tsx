@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 import {
-  signInWithRedirect,
-  signOut, updateProfile
+  signInWithPopup,
+  signOut
 } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase';
 import { useAuth } from '@/hooks/use-auth';
@@ -33,17 +33,7 @@ export function Navbar() {
 
   const handleSignIn = async () => {
     try {
-      const result = await signInWithRedirect(auth, googleProvider);
-      // Check if user's display name or photo URL are missing and update profile
-      if (auth.currentUser && (!auth.currentUser.displayName || !auth.currentUser.photoURL)) {
-        const displayName = result.user.displayName || 'New User'; // Use a default if displayName is still null
-        const photoURL = result.user.photoURL || ''; // Use empty string if photoURL is still null
-        await updateProfile(auth.currentUser, {
-          displayName: displayName,
-          photoURL: photoURL,
-        });
-      }
-
+      await signInWithPopup(auth, googleProvider);
     } catch (error) {
       console.error('Error signing in with Google: ', error);
     }
