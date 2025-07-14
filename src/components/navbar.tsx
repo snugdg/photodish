@@ -17,7 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ChefHat, LogIn, LogOut, User as UserIcon, Refrigerator, Dna, GraduationCap } from 'lucide-react';
+import { ChefHat, LogIn, LogOut, User as UserIcon, Refrigerator, Dna, GraduationCap, Info } from 'lucide-react';
 
 
 export function Navbar() {
@@ -65,6 +65,9 @@ export function Navbar() {
           )}
         </nav>
         <div className="flex flex-1 items-center justify-end space-x-4">
+           <Button variant="link" asChild>
+              <Link href="/about">About</Link>
+            </Button>
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

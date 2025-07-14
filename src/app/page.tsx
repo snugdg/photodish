@@ -87,38 +87,6 @@ export default function Home() {
           </Card>
         </div>
       </section>
-
-      <section className="mt-20 animate-in fade-in-50 duration-500">
-        <h2 className="text-3xl font-bold text-center mb-8 font-headline">Meet the Developer</h2>
-        <Card className="max-w-xl mx-auto">
-          <CardContent className="p-8 flex flex-col sm:flex-row items-center gap-8">
-            <Avatar className="h-32 w-32">
-              <AvatarImage src="https://github.com/shadcn.png" alt="Developer Avatar" data-ai-hint="developer avatar" />
-              <AvatarFallback>DV</AvatarFallback>
-            </Avatar>
-            <div className="text-center sm:text-left">
-              <h3 className="text-2xl font-bold font-headline">Your Name</h3>
-              <p className="text-muted-foreground mt-1">A passionate developer who loves to cook and build amazing things with code. This project is a blend of my two passions!</p>
-              <div className="flex justify-center sm:justify-start gap-4 mt-4">
-                <Button variant="outline" size="icon" asChild>
-                  <Link href="#" target="_blank"><Github /></Link>
-                </Button>
-                <Button variant="outline" size="icon" asChild>
-                  <Link href="#" target="_blank"><Linkedin /></Link>
-                </Button>
-                <Button variant="outline" size="icon" asChild>
-                  <Link href="#" target="_blank"><Twitter /></Link>
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-          <CardFooter className="justify-center sm:justify-end">
-            <Button asChild>
-              <Link href="#">View Portfolio</Link>
-            </Button>
-          </CardFooter>
-        </Card>
-      </section>
     </>
   );
 }
