@@ -25,7 +25,8 @@ import {
   DialogTrigger,
   DialogFooter
 } from "@/components/ui/dialog"
-import { ChefHat, LogIn, LogOut, User as UserIcon, Refrigerator, Dna, GraduationCap, Github, Linkedin, Twitter } from 'lucide-react';
+import { ChefHat, LogIn, LogOut, User as UserIcon, Refrigerator, Dna, GraduationCap, Linkedin } from 'lucide-react';
+import { XLogo } from './ui/x-logo';
 
 
 export function Navbar() {
@@ -66,20 +67,17 @@ export function Navbar() {
             <p className="text-muted-foreground mt-1 text-sm">A passionate developer who loves to cook and build amazing things with code. This project is a blend of my two passions!</p>
             <div className="flex justify-center gap-4 mt-4">
               <Button variant="outline" size="icon" asChild>
-                <Link href="#" target="_blank"><Github /></Link>
+                <Link href="https://www.linkedin.com/in/sarmistha-ghosh-923171281/" target="_blank"><Linkedin /></Link>
               </Button>
               <Button variant="outline" size="icon" asChild>
-                <Link href="#" target="_blank"><Linkedin /></Link>
-              </Button>
-              <Button variant="outline" size="icon" asChild>
-                <Link href="#" target="_blank"><Twitter /></Link>
+                <Link href="https://x.com/sarmisthasoumi" target="_blank"><XLogo /></Link>
               </Button>
             </div>
           </div>
         </div>
          <DialogFooter className="justify-center">
             <Button asChild>
-                <Link href="#">View Portfolio</Link>
+                <Link href="https://sarmista.dev" target='_blank'>View Portfolio</Link>
             </Button>
         </DialogFooter>
       </DialogContent>
