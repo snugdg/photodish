@@ -1,8 +1,11 @@
 import { RecipeUploader } from '@/components/recipe-uploader';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Utensils, Lightbulb, Heart } from 'lucide-react';
+import { Utensils, Lightbulb, Heart, AlertTriangle } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 export default function Home() {
+  const isFirebaseConfigured = process.env.NEXT_PUBLIC_FIREBASE_API_KEY && process.env.FIREBASE_SERVICE_ACCOUNT;
+
   return (
     <div className="container mx-auto px-4 py-8">
       <section className="text-center mb-12 animate-in fade-in-50 slide-in-from-top-4 duration-500">
@@ -15,10 +18,17 @@ export default function Home() {
         </p>
       </section>
 
-      <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-md my-8 max-w-2xl mx-auto" role="alert">
-        <p className="font-bold">Action Required</p>
-        <p>This app requires Firebase configuration. Please add your Firebase project's web app configuration to a `.env.local` file in the root of the project.</p>
-      </div>
+      {!isFirebaseConfigured && (
+        <Alert variant="destructive" className="max-w-2xl mx-auto my-8">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>Action Required: Configure Firebase</AlertTitle>
+          <AlertDescription>
+            This app requires Firebase configuration to run. Please create a 
+            <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold">.env.local</code>
+            file in the project root and add your Firebase web app config and service account key.
+          </AlertDescription>
+        </Alert>
+      )}
 
       <RecipeUploader />
 
