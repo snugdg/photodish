@@ -19,6 +19,7 @@ export type SuggestDrinkPairingInput = z.infer<typeof SuggestDrinkPairingInputSc
 const PairingSuggestionSchema = z.object({
   name: z.string().describe('The name of the suggested drink (e.g., "Sauvignon Blanc", "IPA", "Sparkling Cranberry Punch").'),
   reason: z.string().describe('A brief explanation for why this drink pairs well with the dish.'),
+  imageHint: z.string().describe('A one or two word hint for generating an image of the drink. E.g. "white wine", "craft beer", "fruity cocktail".'),
 });
 
 const SuggestDrinkPairingOutputSchema = z.object({
@@ -38,7 +39,7 @@ const prompt = ai.definePrompt({
   output: {schema: SuggestDrinkPairingOutputSchema},
   prompt: `You are an expert sommelier and food pairing specialist. Given a recipe name and its ingredients, suggest one wine, one beer, and one non-alcoholic beverage that would pair wonderfully with the dish.
 
-For each suggestion, provide the name of the drink and a concise, one-sentence reason explaining why it's a good match.
+For each suggestion, provide the name of the drink, a concise, one-sentence reason explaining why it's a good match, and a short hint for generating an image of it.
 
 Dish Name: {{{recipeName}}}
 

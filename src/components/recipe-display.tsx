@@ -6,7 +6,7 @@ import { summarizeRecipe } from '@/ai/flows/summarize-recipe';
 import type { GenerateRecipeFromPhotoOutput } from '@/ai/flows/generate-recipe-from-photo';
 import { suggestDrinkPairing, SuggestDrinkPairingOutput } from '@/ai/flows/suggest-drink-pairing';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Check, ChefHat, Heart, Clipboard, Loader2, Wand2, GlassWater, Wine, Beer } from 'lucide-react';
 import { Separator } from './ui/separator';
@@ -175,45 +175,48 @@ ${simpleInstructions ? `\nInstructions (Simple):\n${simpleInstructions.map((step
       <div className="grid sm:grid-cols-3 gap-4">
         {isLoadingPairings ? (
           <>
-            <Skeleton className="h-24 w-full" />
-            <Skeleton className="h-24 w-full" />
-            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-48 w-full" />
+            <Skeleton className="h-48 w-full" />
+            <Skeleton className="h-48 w-full" />
           </>
         ) : (
           <>
             {drinkPairings?.wine && (
               <Card>
-                <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-2">
-                  <Wine className="w-5 h-5 text-muted-foreground" />
-                  <CardTitle className="text-base font-medium">Wine</CardTitle>
+                 <CardHeader className="p-0">
+                  <div className="relative h-32 w-full">
+                    <Image src="https://placehold.co/300x200" alt={drinkPairings.wine.name} fill objectFit="cover" className="rounded-t-lg" data-ai-hint={drinkPairings.wine.imageHint} />
+                  </div>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-lg font-bold">{drinkPairings.wine.name}</p>
-                  <p className="text-xs text-muted-foreground">{drinkPairings.wine.reason}</p>
+                <CardContent className="p-4">
+                  <h4 className="font-bold">{drinkPairings.wine.name}</h4>
+                  <p className="text-xs text-muted-foreground mt-1">{drinkPairings.wine.reason}</p>
                 </CardContent>
               </Card>
             )}
             {drinkPairings?.beer && (
               <Card>
-                <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-2">
-                  <Beer className="w-5 h-5 text-muted-foreground" />
-                  <CardTitle className="text-base font-medium">Beer</CardTitle>
+                <CardHeader className="p-0">
+                  <div className="relative h-32 w-full">
+                    <Image src="https://placehold.co/300x200" alt={drinkPairings.beer.name} fill objectFit="cover" className="rounded-t-lg" data-ai-hint={drinkPairings.beer.imageHint} />
+                  </div>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-lg font-bold">{drinkPairings.beer.name}</p>
-                  <p className="text-xs text-muted-foreground">{drinkPairings.beer.reason}</p>
+                <CardContent className="p-4">
+                  <h4 className="font-bold">{drinkPairings.beer.name}</h4>
+                  <p className="text-xs text-muted-foreground mt-1">{drinkPairings.beer.reason}</p>
                 </CardContent>
               </Card>
             )}
             {drinkPairings?.nonAlcoholic && (
               <Card>
-                <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-2">
-                  <GlassWater className="w-5 h-5 text-muted-foreground" />
-                  <CardTitle className="text-base font-medium">Non-Alcoholic</CardTitle>
+                <CardHeader className="p-0">
+                  <div className="relative h-32 w-full">
+                    <Image src="https://placehold.co/300x200" alt={drinkPairings.nonAlcoholic.name} fill objectFit="cover" className="rounded-t-lg" data-ai-hint={drinkPairings.nonAlcoholic.imageHint} />
+                  </div>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-lg font-bold">{drinkPairings.nonAlcoholic.name}</p>
-                  <p className="text-xs text-muted-foreground">{drinkPairings.nonAlcoholic.reason}</p>
+                <CardContent className="p-4">
+                  <h4 className="font-bold">{drinkPairings.nonAlcoholic.name}</h4>
+                  <p className="text-xs text-muted-foreground mt-1">{drinkPairings.nonAlcoholic.reason}</p>
                 </CardContent>
               </Card>
             )}
