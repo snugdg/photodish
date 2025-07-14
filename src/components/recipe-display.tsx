@@ -70,6 +70,7 @@ export function RecipeDisplay({ initialRecipe, photoUrl }: RecipeDisplayProps) {
   const { toast } = useToast();
 
   const ingredientsForHighlight = useMemo(() => {
+    if (!recipe) return [];
     // Extract the core ingredient name, removing quantities or descriptions
     return recipe.ingredients.map(ing => {
       let coreIngredient = ing.split(',')[0].trim();
@@ -84,9 +85,10 @@ export function RecipeDisplay({ initialRecipe, photoUrl }: RecipeDisplayProps) {
       }
       return coreIngredient;
     }).filter(ing => ing.length > 2); // filter out very short words
-  }, [recipe.ingredients]);
+  }, [recipe]);
 
   useEffect(() => {
+    if (!recipe) return;
     // Fetch drink pairings when the recipe changes
     startPairingTransition(async () => {
       try {
@@ -104,7 +106,7 @@ export function RecipeDisplay({ initialRecipe, photoUrl }: RecipeDisplayProps) {
   }, [recipe]);
 
   const getSimpleInstructions = async () => {
-    if (simpleInstructions) return;
+    if (simpleInstructions || !recipe) return;
     
     startSummaryTransition(async () => {
       try {
@@ -135,10 +137,12 @@ export function RecipeDisplay({ initialRecipe, photoUrl }: RecipeDisplayProps) {
       return;
     }
 
+    if (!recipe) return;
+
     startRemixTransition(async () => {
       try {
         // Reset dependent state before fetching new data
-        setRecipe(prev => ({...prev, name: `Remix of ${prev.name}`})); // Optimistic UI update
+        setRecipe(prev => (prev ? {...prev, name: `Remix of ${prev.name}`} : undefined)); // Optimistic UI update
         setSimpleInstructions(null);
         setDrinkPairings(null);
         
@@ -174,6 +178,15 @@ export function RecipeDisplay({ initialRecipe, photoUrl }: RecipeDisplayProps) {
       });
       return;
     }
+    
+    if (!recipe) {
+        toast({
+            variant: 'destructive',
+            title: 'No recipe to save',
+            description: 'Cannot save an empty recipe.',
+        });
+        return;
+    }
 
     startSavingTransition(async () => {
       try {
@@ -199,6 +212,7 @@ export function RecipeDisplay({ initialRecipe, photoUrl }: RecipeDisplayProps) {
   };
 
   const copyToClipboard = () => {
+    if (!recipe) return;
     const recipeText = `
 Recipe: ${recipe.name}
 
@@ -259,6 +273,16 @@ ${simpleInstructions ? `\nInstructions (Simple):\n${simpleInstructions.map((step
       </div>
     </div>
   );
+
+  if (!recipe) {
+    return (
+      <Card className="overflow-hidden animate-in fade-in-50 duration-500">
+        <CardContent className="p-6 text-center">
+          <p className="text-muted-foreground">Something went wrong. No recipe data available.</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="overflow-hidden animate-in fade-in-50 duration-500">
