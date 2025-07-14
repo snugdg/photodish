@@ -5,6 +5,7 @@ import { AuthProvider } from '@/components/auth-provider';
 import { Navbar } from '@/components/navbar';
 import { inter } from '@/app/font';
 import { cn } from '@/lib/utils';
+import { AuthInitializer } from '@/components/auth-initializer';
 
 export const metadata: Metadata = {
   title: 'PhotoDish - AI Recipe Generator',
@@ -20,11 +21,13 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className="scroll-smooth">
       <body className={cn("min-h-screen bg-background font-sans antialiased", inter.variable)}>
         <AuthProvider>
-          <div className="flex flex-col min-h-screen">
-            <Navbar />
-            <main className="flex-grow container mx-auto px-4 py-8">{children}</main>
-          </div>
-          <Toaster />
+          <AuthInitializer>
+            <div className="flex flex-col min-h-screen">
+              <Navbar />
+              <main className="flex-grow container mx-auto px-4 py-8">{children}</main>
+            </div>
+            <Toaster />
+          </AuthInitializer>
         </AuthProvider>
       </body>
     </html>
