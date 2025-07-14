@@ -10,10 +10,20 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useState, useEffect } from 'react';
 
 export default function Home() {
-  const [isFirebaseConfigured, setIsFirebaseConfigured] = useState(false);
+  const [isFirebaseConfigured, setIsFirebaseConfigured] = useState(true);
 
   useEffect(() => {
-    setIsFirebaseConfigured(!!(process.env.NEXT_PUBLIC_FIREBASE_API_KEY && process.env.FIREBASE_SERVICE_ACCOUNT));
+    const firebaseApiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+    const firebaseServiceAccount = process.env.FIREBASE_SERVICE_ACCOUNT;
+    
+    // In a real client-side check, we can only see public variables.
+    // The presence of the API key is a good proxy for client-side setup.
+    // A full check including the service account would need to be inferred or passed differently,
+    // but for this warning, checking the public key is sufficient to detect a missing .env.local file.
+    if (!firebaseApiKey || firebaseApiKey.startsWith('NEXT_PUBLIC_')) {
+      setIsFirebaseConfigured(false);
+    }
+
   }, []);
 
   return (
