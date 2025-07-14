@@ -1,8 +1,8 @@
 'use server';
 
-import { auth, db, storage } from '@/lib/firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { ref, uploadString, getDownloadURL } from 'firebase/storage';
+import { auth } from '@/lib/firebase';
+import { db, storage } from '@/lib/firebase-admin';
+import { FieldValue } from 'firebase-admin/firestore';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
@@ -22,20 +22,39 @@ export async function saveRecipeAction(data: z.infer<typeof RecipeSchema>) {
 
   const validatedData = RecipeSchema.parse(data);
 
-  // Upload image to Firebase Storage
-  const storageRef = ref(storage, `recipes/${user.uid}/${Date.now()}`);
-  const uploadResult = await uploadString(storageRef, validatedData.photoUrl, 'data_url');
-  const downloadUrl = await getDownloadURL(uploadResult.ref);
+  // Extract image data
+  const mimeType = validatedData.photoUrl.match(/data:(.*);base64,/)?.[1];
+  const base64Data = validatedData.photoUrl.split(',')[1];
+  if (!mimeType || !base64Data) {
+    throw new Error('Invalid image data URL.');
+  }
+  const imageBuffer = Buffer.from(base64Data, 'base64');
 
-  // Save recipe to Firestore
-  await addDoc(collection(db, 'recipes'), {
+  // Upload image to Firebase Storage using Admin SDK
+  const bucket = storage.bucket();
+  const filePath = `recipes/${user.uid}/${Date.now()}`;
+  const file = bucket.file(filePath);
+  
+  await file.save(imageBuffer, {
+    metadata: {
+      contentType: mimeType,
+    },
+  });
+
+  const downloadUrl = await file.getSignedUrl({
+    action: 'read',
+    expires: '03-09-2491', // Far future expiration date
+  }).then(urls => urls[0]);
+
+  // Save recipe to Firestore using Admin SDK
+  await db.collection('recipes').add({
     userId: user.uid,
     name: validatedData.name,
     ingredients: validatedData.ingredients,
     instructions: validatedData.instructions,
     simpleInstructions: validatedData.simpleInstructions || [],
     photoUrl: downloadUrl,
-    createdAt: serverTimestamp(),
+    createdAt: FieldValue.serverTimestamp(),
   });
 
   revalidatePath('/recipes');
