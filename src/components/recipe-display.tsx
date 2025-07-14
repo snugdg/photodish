@@ -7,11 +7,13 @@ import type { GenerateRecipeFromPhotoOutput } from '@/ai/flows/generate-recipe-f
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Check, ChefHat, Heart, Clipboard, Loader2 } from 'lucide-react';
+import { Check, ChefHat, Heart, Clipboard, Loader2, Wand2 } from 'lucide-react';
 import { Separator } from './ui/separator';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 import { saveRecipeAction } from '@/lib/actions';
+import { remixRecipe } from '@/ai/flows/remix-recipe';
+import { Textarea } from './ui/textarea';
 
 type Recipe = GenerateRecipeFromPhotoOutput['recipe'];
 
@@ -23,6 +25,8 @@ interface RecipeDisplayProps {
 export function RecipeDisplay({ initialRecipe, photoUrl }: RecipeDisplayProps) {
   const [recipe, setRecipe] = useState(initialRecipe);
   const [simpleInstructions, setSimpleInstructions] = useState<string[] | null>(null);
+  const [remixPrompt, setRemixPrompt] = useState('');
+  const [isRemixing, startRemixTransition] = useTransition();
   const [isLoadingSummary, startSummaryTransition] = useTransition();
   const [isSaving, startSavingTransition] = useTransition();
   const [copied, setCopied] = useState(false);
@@ -46,6 +50,43 @@ export function RecipeDisplay({ initialRecipe, photoUrl }: RecipeDisplayProps) {
           variant: 'destructive',
           title: 'Error simplifying recipe',
           description: 'Could not generate simple instructions. Please try again.',
+        });
+      }
+    });
+  };
+
+  const handleRemixRecipe = () => {
+    if (!remixPrompt) {
+      toast({
+        variant: 'destructive',
+        title: 'Remix prompt is empty',
+        description: 'Please enter what you want to change.',
+      });
+      return;
+    }
+
+    startRemixTransition(async () => {
+      try {
+        const result = await remixRecipe({
+          recipe: {
+            name: recipe.name,
+            ingredients: recipe.ingredients,
+            instructions: recipe.instructions,
+          },
+          prompt: remixPrompt,
+        });
+        setRecipe(result.recipe);
+        // Reset dependent state
+        setSimpleInstructions(null); 
+        toast({
+          title: 'Recipe Remixed!',
+          description: 'Your recipe has been updated with your changes.',
+        });
+      } catch (error) {
+        toast({
+          variant: 'destructive',
+          title: 'Error remixing recipe',
+          description: 'Could not remix the recipe. Please try again.',
         });
       }
     });
@@ -171,6 +212,31 @@ ${simpleInstructions ? `\nInstructions (Simple):\n${simpleInstructions.map((step
             )}
           </TabsContent>
         </Tabs>
+
+        <Separator className="my-6" />
+
+        <div className="space-y-4">
+            <h3 className="text-xl font-semibold flex items-center gap-2 font-headline">
+              <Wand2 className="w-6 h-6 text-primary" />
+              Recipe Remix
+            </h3>
+            <p className="text-muted-foreground">
+              Want to make a change? Tell our AI what you'd like to do. For example: "Make it vegetarian", "Add a spicy kick", or "Remix with Japanese flavors".
+            </p>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Textarea
+                placeholder="Enter your remix request..."
+                value={remixPrompt}
+                onChange={(e) => setRemixPrompt(e.target.value)}
+                className="flex-grow"
+                disabled={isRemixing}
+              />
+              <Button onClick={handleRemixRecipe} disabled={isRemixing} className="sm:self-end">
+                {isRemixing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                Remix Recipe
+              </Button>
+            </div>
+        </div>
       </CardContent>
     </Card>
   );
