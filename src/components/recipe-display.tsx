@@ -183,11 +183,9 @@ ${simpleInstructions ? `\nInstructions (Simple):\n${simpleInstructions.map((step
           <>
             {drinkPairings?.wine && (
               <Card>
-                 <CardHeader className="p-0">
-                  <div className="relative h-32 w-full">
-                    <Image src="https://placehold.co/300x200" alt={drinkPairings.wine.name} fill objectFit="cover" className="rounded-t-lg" data-ai-hint={drinkPairings.wine.imageHint} />
-                  </div>
-                </CardHeader>
+                <div className="relative h-32 w-full">
+                  <Image src="https://placehold.co/300x200" alt={drinkPairings.wine.name} fill objectFit="cover" className="rounded-t-lg" data-ai-hint={drinkPairings.wine.imageHint} />
+                </div>
                 <CardContent className="p-4">
                   <h4 className="font-bold">{drinkPairings.wine.name}</h4>
                   <p className="text-xs text-muted-foreground mt-1">{drinkPairings.wine.reason}</p>
@@ -196,11 +194,9 @@ ${simpleInstructions ? `\nInstructions (Simple):\n${simpleInstructions.map((step
             )}
             {drinkPairings?.beer && (
               <Card>
-                <CardHeader className="p-0">
-                  <div className="relative h-32 w-full">
-                    <Image src="https://placehold.co/300x200" alt={drinkPairings.beer.name} fill objectFit="cover" className="rounded-t-lg" data-ai-hint={drinkPairings.beer.imageHint} />
-                  </div>
-                </CardHeader>
+                <div className="relative h-32 w-full">
+                  <Image src="https://placehold.co/300x200" alt={drinkPairings.beer.name} fill objectFit="cover" className="rounded-t-lg" data-ai-hint={drinkPairings.beer.imageHint} />
+                </div>
                 <CardContent className="p-4">
                   <h4 className="font-bold">{drinkPairings.beer.name}</h4>
                   <p className="text-xs text-muted-foreground mt-1">{drinkPairings.beer.reason}</p>
@@ -209,11 +205,9 @@ ${simpleInstructions ? `\nInstructions (Simple):\n${simpleInstructions.map((step
             )}
             {drinkPairings?.nonAlcoholic && (
               <Card>
-                <CardHeader className="p-0">
-                  <div className="relative h-32 w-full">
-                    <Image src="https://placehold.co/300x200" alt={drinkPairings.nonAlcoholic.name} fill objectFit="cover" className="rounded-t-lg" data-ai-hint={drinkPairings.nonAlcoholic.imageHint} />
-                  </div>
-                </CardHeader>
+                <div className="relative h-32 w-full">
+                  <Image src="https://placehold.co/300x200" alt={drinkPairings.nonAlcoholic.name} fill objectFit="cover" className="rounded-t-lg" data-ai-hint={drinkPairings.nonAlcoholic.imageHint} />
+                </div>
                 <CardContent className="p-4">
                   <h4 className="font-bold">{drinkPairings.nonAlcoholic.name}</h4>
                   <p className="text-xs text-muted-foreground mt-1">{drinkPairings.nonAlcoholic.reason}</p>
