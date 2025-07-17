@@ -63,7 +63,7 @@ export function Navbar() {
             <AvatarFallback>SG</AvatarFallback>
           </Avatar>
           <div className="text-center">
-            <h3 className="text-xl font-bold font-headline">Sharmista Ghosh</h3>
+            <h3 className="text-xl font-bold font-headline">Sarmistha Ghosh</h3>
             <p className="text-muted-foreground mt-1 text-sm">A passionate developer who loves to cook and build amazing things with code. This project is a blend of my two passions!</p>
             <div className="flex justify-center gap-4 mt-4">
               <Button variant="outline" size="icon" asChild>
