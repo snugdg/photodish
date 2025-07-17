@@ -59,7 +59,7 @@ export function Navbar() {
         </DialogHeader>
         <div className="p-4 flex flex-col items-center gap-4">
           <Avatar className="h-24 w-24">
-            <AvatarImage src="https://github.com/shadcn.png" alt="Developer Avatar" data-ai-hint="developer avatar" />
+            <AvatarImage src="/sarmistha.jpg" alt="Sarmistha Ghosh" data-ai-hint="developer avatar" />
             <AvatarFallback>SG</AvatarFallback>
           </Avatar>
           <div className="text-center">
